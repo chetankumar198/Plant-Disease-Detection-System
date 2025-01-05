@@ -8,7 +8,7 @@ from tensorflow.keras.models import load_model
 # Function to load the model and make predictions
 def model_predict(image):
     try:
-        model = load_model(r"D:\Python\PlantDiseaseDetection\CNN_plantdiseases_model.keras")
+        model = load_model(r"PlantDiseaseDetection/CNN_plantdiseases_model.keras filter=lfs diff=lfs merge=lfs -texts")
     except Exception as e:
         st.error(f"Error loading model: {e}")
         return None
