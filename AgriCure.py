@@ -6,10 +6,14 @@ from PIL import Image
 from tensorflow.keras.models import load_model
 
 # Load the pre-trained model once
-@st.cache(allow_output_mutation=True)
+@st.cache_resource
 def load_prediction_model():
+    model_path = r"D:\Python\PlantDiseaseDetection\CNN_plantdiseases_model.keras"
+    if not os.path.exists(model_path):
+        st.error(f"Model file not found at {model_path}. Please check the file path.")
+        return None
     try:
-        model = load_model(r"D:\Python\PlantDiseaseDetection\CNN_plantdiseases_model.keras")
+        model = load_model(model_path)
         return model
     except Exception as e:
         st.error(f"Error loading model: {e}")
@@ -170,6 +174,7 @@ st.markdown("""
         <p>🌱 Empowering farmers, one crop at a time.</p>
     </footer>
 """, unsafe_allow_html=True)
+
 
 
 
