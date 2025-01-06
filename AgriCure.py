@@ -187,7 +187,7 @@ st.markdown(
         <p>🌱 Empowering farmers, one crop at a time.</p>
     </footer>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True..
 )
 
 
