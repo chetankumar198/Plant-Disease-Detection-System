@@ -5,34 +5,41 @@ import os
 from PIL import Image
 from tensorflow.keras.models import load_model
 
-# Function to load the model and make predictions
-def model_predict(image):
+# Load the pre-trained model once
+@st.cache(allow_output_mutation=True)
+def load_prediction_model():
     try:
-        # Load the pre-trained model
         model = load_model(r"D:\Python\PlantDiseaseDetection\CNN_plantdiseases_model.keras")
+        return model
     except Exception as e:
         st.error(f"Error loading model: {e}")
         return None
 
-    # Convert PIL image to NumPy array or read the image
-    if isinstance(image, Image.Image):
-        img = np.array(image)
-    else:
-        img = cv2.imread(image)
-    
-    if img is None:
-        st.error("Error: Image not found or invalid format.")
+model = load_prediction_model()
+
+# Function to preprocess and predict the image
+def model_predict(image):
+    if model is None:
+        st.error("Model could not be loaded.")
         return None
 
-    # Resize and preprocess the image
-    H, W, C = 224, 224, 3
     try:
-        img = cv2.resize(img, (H, W))
-        if len(img.shape) == 3 and img.shape[2] == 3:
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        if isinstance(image, Image.Image):
+            img = np.array(image)
+        elif isinstance(image, (str, bytes)):
+            img = cv2.imdecode(np.frombuffer(image, np.uint8), cv2.IMREAD_COLOR)
         else:
-            st.error("Invalid image format: Image must have 3 color channels (RGB).")
+            st.error("Unsupported image format.")
             return None
+
+        if img is None:
+            st.error("Error: Image not found or invalid format.")
+            return None
+
+        # Resize and preprocess the image
+        H, W, C = 224, 224, 3
+        img = cv2.resize(img, (H, W))
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = img.astype("float32") / 255.0
         img = img.reshape(1, H, W, C)
 
@@ -48,7 +55,7 @@ def model_predict(image):
 st.markdown("""
     <style>
     body {
-        background-color: #a8d8a8; /* Parrot green */
+        background-color: #a8d8a8;
         color: #000;
     }
     .stSidebar {
@@ -58,7 +65,7 @@ st.markdown("""
         border-radius: 15px;
     }
     .stSidebar img {
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), 0 0 10px rgba(124, 183, 124, 0.5); /* Shadow + Green Glow */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), 0 0 10px rgba(124, 183, 124, 0.5);
         border-radius: 10px;
     }
     .stButton>button {
@@ -100,20 +107,22 @@ img = Image.open(r"DALL·E 2025-01-03 09.39.38 - A vibrant and dynamic farm land
 st.sidebar.image(img, use_container_width=True, caption="Healthy Crops")
 
 # Class names for diseases
-class_name = ['Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy',
-              'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew',
-              'Cherry_(including_sour)___healthy', 'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot',
-              'Corn_(maize)___Common_rust_', 'Corn_(maize)___Northern_Leaf_Blight', 'Corn_(maize)___healthy',
-              'Grape___Black_rot', 'Grape___Esca_(Black_Measles)', 'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)',
-              'Grape___healthy', 'Orange___Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot',
-              'Peach___healthy', 'Pepper,_bell___Bacterial_spot', 'Pepper,_bell___healthy',
-              'Potato___Early_blight', 'Potato___Late_blight', 'Potato___healthy',
-              'Raspberry___healthy', 'Soybean___healthy', 'Squash___Powdery_mildew',
-              'Strawberry___Leaf_scorch', 'Strawberry___healthy', 'Tomato___Bacterial_spot',
-              'Tomato___Early_blight', 'Tomato___Late_blight', 'Tomato___Leaf_Mold',
-              'Tomato___Septoria_leaf_spot', 'Tomato___Spider_mites Two-spotted_spider_mite',
-              'Tomato___Target_Spot', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Tomato___Tomato_mosaic_virus',
-              'Tomato___healthy']
+class_name = [
+    'Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy',
+    'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew',
+    'Cherry_(including_sour)___healthy', 'Corn_(maize)___Cercospora_leaf_spot Gray_leaf_spot',
+    'Corn_(maize)___Common_rust_', 'Corn_(maize)___Northern_Leaf_Blight', 'Corn_(maize)___healthy',
+    'Grape___Black_rot', 'Grape___Esca_(Black_Measles)', 'Grape___Leaf_blight_(Isariopsis_Leaf_Spot)',
+    'Grape___healthy', 'Orange___Haunglongbing_(Citrus_greening)', 'Peach___Bacterial_spot',
+    'Peach___healthy', 'Pepper,_bell___Bacterial_spot', 'Pepper,_bell___healthy',
+    'Potato___Early_blight', 'Potato___Late_blight', 'Potato___healthy',
+    'Raspberry___healthy', 'Soybean___healthy', 'Squash___Powdery_mildew',
+    'Strawberry___Leaf_scorch', 'Strawberry___healthy', 'Tomato___Bacterial_spot',
+    'Tomato___Early_blight', 'Tomato___Late_blight', 'Tomato___Leaf_Mold',
+    'Tomato___Septoria_leaf_spot', 'Tomato___Spider_mites Two-spotted_spider_mite',
+    'Tomato___Target_Spot', 'Tomato___Tomato_Yellow_Leaf_Curl_Virus', 'Tomato___Tomato_mosaic_virus',
+    'Tomato___healthy'
+]
 
 # Main application logic
 if app_mode == "HOME":
@@ -134,13 +143,10 @@ elif app_mode == "DISEASE RECOGNITION":
     if option == "Upload an Image":
         test_image = st.file_uploader("Choose an Image:")
         if test_image is not None:
-            # Save and display the image
-            save_path = os.path.join(os.getcwd(), test_image.name)
-            with open(save_path, "wb") as f:
-                f.write(test_image.getbuffer())
+            # Display the image
             st.image(test_image, caption="Uploaded Image", use_column_width=True)
             if st.button("Predict"):
-                result_index = model_predict(save_path)
+                result_index = model_predict(test_image.read())
                 if result_index is not None and result_index < len(class_name):
                     st.success(f"Predicted class: {class_name[result_index]}")
                 else:
@@ -152,7 +158,7 @@ elif app_mode == "DISEASE RECOGNITION":
             img = Image.open(camera_image)
             st.image(img, caption="Captured Image", use_column_width=True)
             if st.button("Predict"):
-                result_index = model_predict(img)
+                result_index = model_predict(camera_image.read())
                 if result_index is not None and result_index < len(class_name):
                     st.success(f"Predicted class: {class_name[result_index]}")
                 else:
