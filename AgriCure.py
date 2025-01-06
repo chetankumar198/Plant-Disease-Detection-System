@@ -109,7 +109,7 @@ st.sidebar.title("🌱 Plant Disease Detection System")
 app_mode = st.sidebar.selectbox("Select Page", ["HOME", "DISEASE RECOGNITION"])
 
 # Display the image in the sidebar
-img = Image.open(r"D:\Python\PlantDiseaseDetection\DALL·E 2025-01-03 09.39.38 - A vibrant and dynamic farm landscape in a 16_9 aspect ratio, with diverse healthy crops under a glowing sunset. Digital overlays display crop health a.webp")
+img = Image.open(r"DALL·E 2025-01-03 09.39.38 - A vibrant and dynamic farm landscape in a 16_9 aspect ratio, with diverse healthy crops under a glowing sunset. Digital overlays display crop health a.webp")
 st.sidebar.image(img, use_container_width=True, caption="Healthy Crops")
 
 # Class names
