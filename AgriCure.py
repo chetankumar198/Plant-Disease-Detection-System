@@ -119,7 +119,7 @@ class_name = ['Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_ru
 if app_mode == "HOME":
     st.markdown("""
         <div class="content-box">
-            <h1 style='text-align: center;'>🌿 Plant Disease Detection System for Sustainable Agriculture🌱</h1>
+            <h1 style='text-align: center;'>🌿 Plant Disease Detection System 🌱</h1>
             <p style='text-align: center;'>Empowering farmers with AI-driven solutions.</p>
         </div>
     """, unsafe_allow_html=True)
