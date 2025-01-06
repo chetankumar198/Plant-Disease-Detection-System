@@ -8,7 +8,7 @@ from tensorflow.keras.models import load_model
 # Load the pre-trained model once
 @st.cache_resource
 def load_prediction_model():
-    model_path = r"PlantDiseaseDetection/CNN_plantdiseases_model.keras filter=lfs diff=lfs merge=lfs -text"
+    model_path = r"CNN_plantdiseases_model.7z.002"
     if not os.path.exists(model_path):
         st.error(f"Model file not found at {model_path}. Please check the file path.")
         return None
