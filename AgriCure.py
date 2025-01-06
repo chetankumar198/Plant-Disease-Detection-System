@@ -133,7 +133,7 @@ if app_mode == "HOME":
     st.markdown(
         """
         <div class="content-box">
-            <h1 style='text-align: center;'>🌿 Plant Disease Detection System for Sustainable Agriculture</h1>
+            <h1 style='text-align: center;'>🌿 Plant Disease Detection System for Sustainable Agriculture🌱</h1>
             <p style='text-align: center;'>Empowering farmers with AI-driven solutions.</p>
         </div>
         """,
